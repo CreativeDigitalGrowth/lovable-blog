@@ -10,11 +10,11 @@ In Using Access Token"** (see [setup.md](setup.md#2-access-token-for-the-cms)).
 
 **New Post → fill the fields → uncheck Draft → Save.**
 
-Saving is a commit to `main` on GitHub. Whether that commit alone triggers a rebuild of
-the live bolt.host site, or whether the Bolt.new project needs to be reopened/republished
-to pick it up, has not been verified yet — see the deployment note in
-[deployment.md](deployment.md). Check the live site after saving a post rather than
-assuming it went out automatically.
+Saving is a commit to `main` on GitHub — but that alone does **not** put the post live.
+Confirmed 2026-09-09: a CMS save reached GitHub within seconds but never appeared on
+`creativedigitalgrowth.bolt.host` until the Bolt.new project was reopened and **Publish**
+clicked again. Treat every CMS save as a two-step process: save, then go republish in
+Bolt. See [deployment.md](deployment.md).
 
 ### Locally
 

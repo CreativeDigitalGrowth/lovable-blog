@@ -54,8 +54,8 @@ Re-run it after every `npm install` or `npm ci`. CI on Linux is unaffected. Deta
 ## Writing a post
 
 Open `/admin/` → **New Post** → uncheck **Draft** → **Save**. That commits to `main` on
-GitHub. Whether that alone updates the live bolt.host site, or whether Bolt.new needs to
-be reopened/republished first, hasn't been verified — see
+GitHub, but does **not** by itself update the live bolt.host site — reopen the Bolt.new
+project and click **Publish** to actually ship it. See
 [docs/deployment.md](docs/deployment.md).
 
 Or write the file directly — posts are Markdown in `src/content/blog/`, and the filename
@@ -102,8 +102,8 @@ This project was scaffolded from the sibling Cloudflare Pages blog's codebase on
 
 - [x] GitHub repository created and pushed — public, `CreativeDigitalGrowth/lovable-blog`
 - [x] Hosted and live — imported into Bolt.new via the repo's GitHub URL, published to
-      `creativedigitalgrowth.bolt.host`. Whether GitHub pushes alone keep it in sync, or
-      Bolt needs manual republishing each time, is unverified — see
+      `creativedigitalgrowth.bolt.host`. GitHub pushes do **not** keep it in sync by
+      themselves — every change needs a manual republish inside Bolt.new, see
       [docs/deployment.md](docs/deployment.md)
 - [x] Site URL settled and `astro.config.mjs` / `public/admin/config.yml` / `robots.txt`
       updated off the old `lovable-blog.example.com` placeholder

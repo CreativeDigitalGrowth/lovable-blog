@@ -86,9 +86,10 @@ bridged by whatever sync the host offers — that's the pattern every sibling fo
 (Cloudflare/Netlify's own dashboard integration, GitHub Actions for GitHub
 Pages/Firebase, GitLab CI, a v0.app→Vercel connection). Sveltia CMS commits to the
 GitHub repo named in `public/admin/config.yml` regardless. **For this sibling
-specifically, whether Bolt.new's connection is a live two-way sync or a one-time import
-snapshot is unverified** — unlike every other sibling, don't assume a CMS save reaches
-the live site until you've checked.
+specifically, a CMS save does NOT reach the live site by itself** — confirmed
+2026-09-09: Bolt.new pulls from GitHub only when its own editor is reopened and
+Publish is clicked again, unlike every other sibling's automatic Git-integration
+deploy. Republish manually in Bolt after every CMS save.
 
 ## Before calling a change done
 
@@ -104,10 +105,11 @@ change is visible in a browser, verify with `npm run preview` rather than `npm r
 
 ## Deployment
 
-**Live via Bolt.new.** The GitHub repo was imported into Bolt.new, then published from
-Bolt's own editor to `https://creativedigitalgrowth.bolt.host`. See
-[`docs/deployment.md`](docs/deployment.md) for what's confirmed vs. still unverified
-about how updates reach the live site.
+**Live via Bolt.new, manual republish required.** The GitHub repo was imported into
+Bolt.new, then published from Bolt's own editor to
+`https://creativedigitalgrowth.bolt.host`. Pushing to `main` — including a CMS save —
+does **not** trigger a rebuild by itself; someone has to reopen the Bolt.new project and
+click Publish again. See [`docs/deployment.md`](docs/deployment.md).
 
 Local git authenticates as `mohiseen-aumni`, the same account used for every sibling —
 that account's access is unrelated to whoever controls the Bolt.new project itself.

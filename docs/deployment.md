@@ -1,11 +1,10 @@
 # Deployment
 
-> **Partially verified.** This page describes Bolt.new/bolt.host, which is what's
-> actually live at `creativedigitalgrowth.bolt.host` — not the Cloudflare Pages
-> mechanism this page described before (inherited unmodified from the template this repo
-> was copied from, `cloudflare-blog`). The one-time import-and-publish path is confirmed
-> working; the ongoing-updates path below it is not yet confirmed. See the deployment
-> note in `CLAUDE.md`.
+> **Verified.** This page describes Bolt.new/bolt.host, which is what's actually live at
+> `creativedigitalgrowth.bolt.host` — not the Cloudflare Pages mechanism this page
+> described before (inherited unmodified from the template this repo was copied from,
+> `cloudflare-blog`). **Saving a post in the CMS does not update the live site by
+> itself** — see below.
 
 **GitHub repo:** `CreativeDigitalGrowth/lovable-blog` — public, pushed, what the CMS
 commits to. **Bolt.new project:** imported from that repo via the
@@ -28,17 +27,20 @@ Confirmed:
   `main` reflecting an `npm install` Bolt ran inside its own WebContainer. Bolt
   maintains a live, writable connection back to this GitHub repo.
 
-Still unverified — the reverse direction:
-  git push to main from outside Bolt (e.g. a CMS save, or this docs cleanup)
-    └─ (A) Bolt picks it up and republishes bolt.host automatically, the way
-           Cloudflare/Netlify's Git integrations do, OR
-    └─ (B) Bolt only pulls when its own editor session is reopened, and reaching
-           bolt.host after an external push still needs a manual Publish click
+Confirmed — the reverse direction does NOT auto-deploy:
+  git push to main from outside Bolt (e.g. a CMS save)
+    └─ does NOT republish bolt.host by itself, unlike Cloudflare/Netlify's Git
+       integrations. Reproduced 2026-09-09: a CMS save landed as commit e432c0f
+       ("Create Post "test"") on GitHub within seconds, but the live site kept
+       showing only the original placeholder post with no new build triggered.
+    └─ the fix is to reopen the project in Bolt.new and click "Publish" again —
+       that pulls the latest `main` into the editor session and republishes it
 ```
 
-Saving a post in the CMS is a push to `main` on GitHub regardless of which of those is
-true — check the live site afterward rather than assuming (A). There is no GitHub
-Actions workflow and no repository secrets involved in the Bolt path either way.
+**So publishing a CMS post is a two-step process here, unlike every other sibling**:
+save in the CMS (commits to `main`), then separately open Bolt.new and click Publish.
+There is no GitHub Actions workflow and no repository secrets involved in the Bolt path
+either way.
 
 ### Why the npm `postbuild` hook matters
 
@@ -99,9 +101,9 @@ git revert <sha>
 git push
 ```
 
-Unlike the Cloudflare/Netlify siblings, pushing this alone is **not** confirmed to
-redeploy — see the unverified sync question above. Treat "revert and push" as step one
-of two until that's settled, with "reopen Bolt and Publish" as the likely step two.
+Unlike the Cloudflare/Netlify siblings, pushing this alone is **confirmed not** to
+redeploy — see above. "Revert and push" is step one of two; "reopen Bolt and Publish" is
+the required step two.
 
 ## Local equivalents
 
