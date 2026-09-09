@@ -22,13 +22,18 @@ Confirmed:
           └─ Bolt builds and deploys the current in-editor workspace to
              https://creativedigitalgrowth.bolt.host
 
-Unverified — pick one before relying on it:
-  git push to main (including a CMS save)
-    └─ (A) Bolt keeps the imported project synced to the GitHub repo and republishes
-           automatically, the way Cloudflare/Netlify's Git integrations do, OR
-    └─ (B) Bolt only reads the repo at import time; the workspace and the GitHub repo
-           drift apart after that, and reaching bolt.host requires reopening the Bolt
-           project and clicking Publish again
+  Bolt.new → GitHub push-back is real, not just a one-time import snapshot:
+  minutes after import, a commit ("Updated package-lock.json", 2026-09-09 17:56,
+  authored as CreativeDigitalGrowth via GitHub's own committer identity) landed on
+  `main` reflecting an `npm install` Bolt ran inside its own WebContainer. Bolt
+  maintains a live, writable connection back to this GitHub repo.
+
+Still unverified — the reverse direction:
+  git push to main from outside Bolt (e.g. a CMS save, or this docs cleanup)
+    └─ (A) Bolt picks it up and republishes bolt.host automatically, the way
+           Cloudflare/Netlify's Git integrations do, OR
+    └─ (B) Bolt only pulls when its own editor session is reopened, and reaching
+           bolt.host after an external push still needs a manual Publish click
 ```
 
 Saving a post in the CMS is a push to `main` on GitHub regardless of which of those is

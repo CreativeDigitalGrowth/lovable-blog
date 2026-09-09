@@ -12,11 +12,12 @@ pushed to GitHub first, then imported into Bolt.new (via the `bolt.new/~/github.
 import URL) and published from there to `https://creativedigitalgrowth.bolt.host`. The
 working name "lovable-blog" reflects the platform the user originally asked about
 (lovable.dev), a prompt-first React/Vite app builder — that platform's own GitHub sync
-was never tried, since Bolt.new turned out to be the tool actually used. **Don't assume
-`git push` alone redeploys the live site** — whether Bolt keeps polling the GitHub repo
-after import or the workspace only updates on a manual republish inside Bolt has not been
-verified; see the deployment note in [`docs/deployment.md`](docs/deployment.md) and check
-the live site after any change made outside Bolt's own editor.
+was never tried, since Bolt.new turned out to be the tool actually used. Bolt.new → GitHub push-back is confirmed real (it committed a `package-lock.json`
+update from its own `npm install` shortly after import), but **don't assume the reverse
+holds** — whether a `git push` made outside Bolt (e.g. a CMS save) gets pulled in and
+redeployed automatically, or needs a manual reopen-and-Publish inside Bolt, has not been
+verified; see [`docs/deployment.md`](docs/deployment.md) and check the live site after
+any change made outside Bolt's own editor.
 
 ## Development
 
