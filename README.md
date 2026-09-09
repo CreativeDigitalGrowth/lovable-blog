@@ -1,8 +1,9 @@
 # Lovable Blog
 
 A static blog for a single author. Astro + TypeScript, Markdown content collections,
-Sveltia CMS at `/admin`, Pagefind search, Giscus comments. **Hosting is not yet
-decided** — see [Status](#status) below.
+Sveltia CMS at `/admin`, Pagefind search, Giscus comments. **Live at
+[creativedigitalgrowth.bolt.host](https://creativedigitalgrowth.bolt.host)**, hosted via
+Bolt.new — see [Status](#status) below.
 
 No server, no database, no tracking scripts, no cookie banner, no CSS framework. Three
 runtime dependencies. The only client-side JavaScript is a theme toggle, a copy-link
@@ -18,10 +19,10 @@ deliberately different visual design: [`blog/`](../blog) (GitHub Pages),
 
 | Document | What it covers |
 | --- | --- |
-| [docs/setup.md](docs/setup.md) | One-time setup — GitHub repo (done), host Git integration (not yet chosen), CMS token, Giscus, contact form, author details |
+| [docs/setup.md](docs/setup.md) | One-time setup — GitHub repo (done), Bolt.new hosting (done), CMS token, Giscus, contact form, author details |
 | [docs/writing.md](docs/writing.md) | Writing and publishing posts, frontmatter reference, drafts, images |
 | [docs/architecture.md](docs/architecture.md) | How the site is built and why the awkward parts are that way |
-| [docs/deployment.md](docs/deployment.md) | CI/CD — still describes the inherited Cloudflare mechanism, stale until a host is picked |
+| [docs/deployment.md](docs/deployment.md) | CI/CD — Bolt.new/bolt.host, including what's still unverified about it |
 | [docs/troubleshooting.md](docs/troubleshooting.md) | Common failures, with the fix |
 | [SECURITY.md](SECURITY.md) | Threat model, token hygiene, why deletion is not erasure |
 | [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md) | Ground rules for comments |
@@ -52,9 +53,10 @@ Re-run it after every `npm install` or `npm ci`. CI on Linux is unaffected. Deta
 
 ## Writing a post
 
-Open `/admin/` → **New Post** → uncheck **Draft** → **Save**. That commits to `main`;
-once a host is connected, that push triggers a build and deploy the same way it does for
-every sibling.
+Open `/admin/` → **New Post** → uncheck **Draft** → **Save**. That commits to `main` on
+GitHub. Whether that alone updates the live bolt.host site, or whether Bolt.new needs to
+be reopened/republished first, hasn't been verified — see
+[docs/deployment.md](docs/deployment.md).
 
 Or write the file directly — posts are Markdown in `src/content/blog/`, and the filename
 is the URL slug:
@@ -90,20 +92,21 @@ hardcode paths: every internal link still goes through [`src/lib/url.ts`](src/li
 To verify after any change, build and confirm every absolute URL points at this site:
 
 ```bash
-grep -rhoE 'https?://[^"< ]+' dist --include=*.html --include=*.xml   | grep -v 'lovable-blog.example.com' | sort -u
+grep -rhoE 'https?://[^"< ]+' dist --include=*.html --include=*.xml   | grep -v 'creativedigitalgrowth.bolt.host' | sort -u
 ```
 
 ## Status
 
 This project was scaffolded from the sibling Cloudflare Pages blog's codebase on
-2026-09-09, with its own visual design. The repo exists; nothing else does yet:
+2026-09-09, with its own visual design, then imported into Bolt.new and published:
 
 - [x] GitHub repository created and pushed — public, `CreativeDigitalGrowth/lovable-blog`
-- [ ] A host connected (Cloudflare/Netlify-style dashboard integration, a GitHub Actions
-      workflow, or Lovable.dev's own GitHub sync if it turns out to support importing an
-      existing repo — unverified)
-- [ ] Site URL settled and `astro.config.mjs` / `public/admin/config.yml` / `robots.txt`
-      updated off the `lovable-blog.example.com` placeholder
+- [x] Hosted and live — imported into Bolt.new via the repo's GitHub URL, published to
+      `creativedigitalgrowth.bolt.host`. Whether GitHub pushes alone keep it in sync, or
+      Bolt needs manual republishing each time, is unverified — see
+      [docs/deployment.md](docs/deployment.md)
+- [x] Site URL settled and `astro.config.mjs` / `public/admin/config.yml` / `robots.txt`
+      updated off the old `lovable-blog.example.com` placeholder
 - [ ] CMS access token, Giscus IDs, contact form endpoint, author details in `src/consts.ts`
 
 The site also builds and runs locally (`npm run dev` / `npm run build` / `npm run

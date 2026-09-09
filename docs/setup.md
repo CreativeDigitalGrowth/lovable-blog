@@ -1,20 +1,22 @@
 # One-time setup
 
-> **Stale.** Section 1 below still describes the Cloudflare Pages Git-integration steps
-> inherited from the template this repo was copied from (`cloudflare-blog`) — hosting for
-> this project is not yet decided. Everything else on this page (CMS token, Giscus,
+> **Partially rewritten.** Section 1 below now describes the Bolt.new import/publish
+> steps actually used, replacing the Cloudflare Pages Git-integration steps inherited
+> from the template this repo was copied from (`cloudflare-blog`). Some mechanics
+> (whether it stays in sync with GitHub) are still unverified — see the callout in
+> [deployment.md](deployment.md). Everything else on this page (CMS token, Giscus,
 > contact form, author details) still applies regardless of host.
 
 Everything on this page is done once. Sections degrade gracefully — missing pieces mean
 a notice or a fallback, not a broken build.
 
 The GitHub repository (`CreativeDigitalGrowth/lovable-blog`) is created, public and
-pushed. No host is connected yet.
+pushed. It's hosted live via Bolt.new.
 
 | Step | Status |
 | --- | --- |
 | Repository created and pushed | ✅ done |
-| Host Git integration connected | ❌ not decided |
+| Hosted and published (Bolt.new → bolt.host) | ✅ done |
 | Fine-grained PAT for the CMS | ❌ not created |
 | Giscus comments | ❌ not configured |
 | Contact form endpoint | ❌ not set |
@@ -22,27 +24,30 @@ pushed. No host is connected yet.
 
 ---
 
-## 1. Cloudflare Git integration ✅
+## 1. Bolt.new import and publish ✅
 
-Done. This is a manual, one-time action taken directly in the Cloudflare dashboard — not
-something a future reader needs to redo — recorded here so it's clear what exists and
-where to find it.
+Done. This was a manual, one-time action taken directly in Bolt.new's own editor — not
+something a future reader needs to redo unless the project needs republishing — recorded
+here so it's clear what exists and where to find it.
 
-Cloudflare's dashboard is connected directly to `CreativeDigitalGrowth/lovable-blog`:
-**Workers & Pages → Create → Connect to Git → `CreativeDigitalGrowth/lovable-blog`**.
-That connection installs a Cloudflare-owned GitHub App with read access to this repo, and
-from then on Cloudflare watches `main` itself and rebuilds on every push — no GitHub
-Actions workflow, no Wrangler CLI, no repository secrets involved anywhere.
+The GitHub repo was opened in Bolt.new via the import URL
+`https://bolt.new/~/github.com/CreativeDigitalGrowth/lovable-blog`, which pulls the repo
+into a WebContainer-based editor session. From there, clicking **Publish** inside Bolt's
+editor built and deployed the project to `https://creativedigitalgrowth.bolt.host`.
 
-Build command, output directory, Node version and environment variables are all set in
-the Cloudflare dashboard, on this connected project's **Settings** page — not in any
-file in this repo. See [deployment.md](deployment.md#whats-configurable-and-where) for
-the current values.
+Whether Bolt keeps this project synced to the GitHub repo (rebuilding automatically on
+every push, the way Cloudflare/Netlify's Git integrations do) or only reflects the state
+of the repo at import time is **unverified** — see
+[deployment.md](deployment.md#how-it-works). If a change pushed to GitHub doesn't show
+up live, the fix is likely reopening the Bolt.new project and clicking Publish again.
 
-The live URL is <https://lovable-blog.example.com> — the standard
-`<project>.pages.dev` domain Cloudflare assigns to a Pages project. A custom domain
-can be attached later from the same dashboard project; see
-[§7 below](#7-optional-custom-domain).
+Build/output/env settings, if Bolt.new exposes any as project settings rather than
+inferring them, haven't been located yet — see
+[deployment.md](deployment.md#whats-configurable-and-where).
+
+The live URL is <https://creativedigitalgrowth.bolt.host> — the standard
+`<project>.bolt.host` domain Bolt assigns on publish. Whether a custom domain can be
+attached, and how, is unconfirmed; see [§7 below](#7-optional-custom-domain).
 
 ## 2. Access token for the CMS
 
@@ -90,7 +95,7 @@ strictly tighter. Prefer fine-grained when the owner account is available to you
 
 Whichever you use, commits are authored by the account that issued the token.
 
-Then open <https://lovable-blog.example.com/admin/>, choose
+Then open <https://creativedigitalgrowth.bolt.host/admin/>, choose
 **"Sign In Using Access Token"** and paste it.
 
 > There is no "Sign In with GitHub" button on the login screen. It starts an OAuth flow
@@ -177,10 +182,9 @@ Blogs commonly split the two: a permissive code licence (MIT) plus a content lic
 
 A custom domain needs `site` in `astro.config.mjs`, `site_url`/`display_url` in
 `public/admin/config.yml`, and the `Sitemap:` line in `public/robots.txt` all updated to
-the new domain, plus adding the domain on the Cloudflare side: **Workers & Pages → the
-connected project → Custom domains → Set up a custom domain**. If the domain's
-nameservers are already on Cloudflare, Cloudflare provisions the certificate and DNS
-automatically; otherwise it walks through the CNAME record to add at your registrar.
+the new domain, plus attaching the domain on the Bolt.new side. Where that setting lives
+in Bolt's UI, and whether it handles certificate/DNS provisioning the way Cloudflare
+does, hasn't been checked yet — look in the Bolt.new project's own settings first.
 
 Because this is already a root-served project, no base path has to change. See
 [architecture.md](architecture.md#base-paths).

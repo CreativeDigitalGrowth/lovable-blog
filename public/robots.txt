@@ -1,9 +1,9 @@
-# Served at https://lovable-blog.example.com/robots.txt — placeholder domain,
-# hosting not yet decided (see CLAUDE.md). Assumes a root-served host; under a
-# sub-path deployment this file would need to move accordingly, or it is ignored.
+# Served at https://creativedigitalgrowth.bolt.host/robots.txt (see CLAUDE.md).
+# Assumes a root-served host; under a sub-path deployment this file would need to
+# move accordingly, or it is ignored.
 
 User-agent: *
 Allow: /
 Disallow: /admin/
 
-Sitemap: https://lovable-blog.example.com/sitemap-index.xml
+Sitemap: https://creativedigitalgrowth.bolt.host/sitemap-index.xml

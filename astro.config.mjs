@@ -2,12 +2,12 @@
 import { defineConfig } from 'astro/config';
 import sitemap from '@astrojs/sitemap';
 
-// Hosting is not yet decided (see CLAUDE.md) — `site` below is a placeholder, and
-// `base` is left at its default of '/' assuming a root-served host. src/lib/url.ts
-// still mediates every internal link, so the site can move under a sub-path or onto a
-// real domain later by changing `site`/`base` here and nothing else.
+// Hosting is Bolt.new/bolt.host (see CLAUDE.md) — `base` is left at its default of '/'
+// since bolt.host serves this project root. src/lib/url.ts still mediates every
+// internal link, so the site can move under a sub-path or onto a real domain later by
+// changing `site`/`base` here and nothing else.
 export default defineConfig({
-  site: 'https://lovable-blog.example.com',
+  site: 'https://creativedigitalgrowth.bolt.host',
   trailingSlash: 'always',
   integrations: [
     sitemap({

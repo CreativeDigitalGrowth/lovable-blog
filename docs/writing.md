@@ -5,13 +5,16 @@ identical results — the CMS is just an editor for the same files.
 
 ## The CMS
 
-Open <https://lovable-blog.example.com/admin/> and choose **"Sign
+Open <https://creativedigitalgrowth.bolt.host/admin/> and choose **"Sign
 In Using Access Token"** (see [setup.md](setup.md#2-access-token-for-the-cms)).
 
 **New Post → fill the fields → uncheck Draft → Save.**
 
-Saving is a commit to `main`. The commit triggers the deploy workflow, and the post is
-live in about a minute.
+Saving is a commit to `main` on GitHub. Whether that commit alone triggers a rebuild of
+the live bolt.host site, or whether the Bolt.new project needs to be reopened/republished
+to pick it up, has not been verified yet — see the deployment note in
+[deployment.md](deployment.md). Check the live site after saving a post rather than
+assuming it went out automatically.
 
 ### Locally
 

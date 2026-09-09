@@ -1,75 +1,72 @@
 # Deployment
 
-> **Stale.** This page still describes the Cloudflare Pages mechanism inherited from the
-> template this repo was copied from (`cloudflare-blog`). No host is connected to
-> `CreativeDigitalGrowth/lovable-blog` yet — rewrite this page once one is chosen. See
-> the deployment note in `CLAUDE.md`.
+> **Partially verified.** This page describes Bolt.new/bolt.host, which is what's
+> actually live at `creativedigitalgrowth.bolt.host` — not the Cloudflare Pages
+> mechanism this page described before (inherited unmodified from the template this repo
+> was copied from, `cloudflare-blog`). The one-time import-and-publish path is confirmed
+> working; the ongoing-updates path below it is not yet confirmed. See the deployment
+> note in `CLAUDE.md`.
 
 **GitHub repo:** `CreativeDigitalGrowth/lovable-blog` — public, pushed, what the CMS
-commits to. Everything below describes what a Cloudflare-Pages-style connection would
-look like, unmodified from the template, as a reference for wiring up whatever host is
-actually chosen.
+commits to. **Bolt.new project:** imported from that repo via the
+`https://bolt.new/~/github.com/CreativeDigitalGrowth/lovable-blog` URL, then published
+from Bolt's own editor to `https://creativedigitalgrowth.bolt.host`.
 
 ## How it works
 
 ```
-push to main (including a CMS save)
-  └─ Cloudflare's dashboard-connected Git integration picks it up via webhook,
-     through its own GitHub App installation
-     └─ Cloudflare builds it server-side: `npm run build`
-        │  `postbuild` runs Pagefind over dist/ automatically — same npm lifecycle
-        │  hook as before, it just runs on Cloudflare's build machine now
-        └─ Cloudflare publishes the output directory (`dist`)
+Confirmed:
+  bolt.new/~/github.com/CreativeDigitalGrowth/lovable-blog
+    └─ Bolt.new imports the repo into a WebContainer-based editor session
+       └─ user clicks "Publish" inside Bolt's editor
+          └─ Bolt builds and deploys the current in-editor workspace to
+             https://creativedigitalgrowth.bolt.host
+
+Unverified — pick one before relying on it:
+  git push to main (including a CMS save)
+    └─ (A) Bolt keeps the imported project synced to the GitHub repo and republishes
+           automatically, the way Cloudflare/Netlify's Git integrations do, OR
+    └─ (B) Bolt only reads the repo at import time; the workspace and the GitHub repo
+           drift apart after that, and reaching bolt.host requires reopening the Bolt
+           project and clicking Publish again
 ```
 
-Saving a post in the CMS **is** a push to `main`, so publishing and deploying are the
-same action. There is no GitHub Actions workflow and no Wrangler CLI anywhere in this
-pipeline — Cloudflare authenticates to GitHub through its own GitHub App installation,
-not a token stored in this repo, and there are no repository secrets involved at all.
+Saving a post in the CMS is a push to `main` on GitHub regardless of which of those is
+true — check the live site afterward rather than assuming (A). There is no GitHub
+Actions workflow and no repository secrets involved in the Bolt path either way.
 
 ### Why the npm `postbuild` hook matters
 
-Cloudflare runs `npm run build` directly rather than `astro build`, so the `postbuild`
-script fires automatically: npm runs `pagefind --site dist` right after Astro finishes,
-and the search index ends up inside `dist/` before Cloudflare publishes it. No extra
-build step to configure, and no way to deploy a site whose search index is stale.
+Whatever builds this project needs to run `npm run build` rather than `astro build`
+directly, so the `postbuild` script fires: npm runs `pagefind --site dist` right after
+Astro finishes, and the search index ends up inside `dist/` before it gets published. No
+extra build step to configure, and no way to deploy a site whose search index is stale.
+Whether Bolt's Publish action actually runs the full `npm run build` (postbuild
+included) rather than just `astro build` has not been checked — if search ever comes up
+empty on the live site, start there.
 
 ## What's configurable, and where
 
-There is no project-creation step and no repository secrets — the one-time setup was
-connecting the Cloudflare dashboard to this GitHub repo (**Workers & Pages → Create →
-Connect to Git**, done already; see [setup.md](setup.md#1-cloudflare-git-integration)).
-
-What *is* configurable lives entirely in the Cloudflare dashboard, not in any file in
-this repo — there is no `wrangler.toml`:
-
-**Project → Settings → Build**, or the equivalent in the newer Workers & Pages settings
-UI:
+There is no `wrangler.toml`, no GitHub Actions workflow file, and no repository secrets
+in this repo for deployment — Bolt.new's build/publish settings, if any are exposed at
+all, would live inside the Bolt.new project's own UI, not in a file here. Not yet
+explored; check Bolt's project settings directly if a build setting ever needs changing.
 
 | Setting | Value here |
 | --- | --- |
-| Build command | `npm run build` |
-| Output directory | `dist` |
-| Node version | 22 (matches `engines.node` in `package.json`) |
+| Node version | unconfirmed — matches whatever Bolt's WebContainer runtime uses |
 | Environment variables | none required by this project today |
-
-Anyone used to the sibling GitHub Pages blog's GitHub-Actions-based flow should look
-here, not in this repo, for anything that would otherwise be a workflow-file setting —
-that's the real "where do I configure X" gotcha moving between the two.
 
 ## Verifying a deployment
 
-Check the Cloudflare dashboard: **Workers & Pages → the connected project →
-Deployments**, which shows the build log, status, and a preview URL per deployment.
-There is no GitHub Actions run to check alongside it — a build either succeeds or fails
-entirely on Cloudflare's side, and its log is the only place to see why.
+Bolt.new's own UI (the project's Publish/deploy history, if it has one) is unexplored —
+check there first if a publish ever seems to fail silently.
 
 A smoke test against the live site is the check that actually matters — it tests what
-visitors get rather than what the local build produced. This should actually be run for
-real now, since the site is live:
+visitors get rather than what the local build produced:
 
 ```bash
-B=https://lovable-blog.example.com
+B=https://creativedigitalgrowth.bolt.host
 for p in "" "blog/" "about/" "contact/" "search/" "admin/" "rss.xml" "sitemap-index.xml" "pagefind/pagefind-ui.js"; do
   echo "$(curl -s -o /dev/null -w '%{http_code}' -L "$B/$p")  /$p"
 done
@@ -82,28 +79,24 @@ All should return `200`. Then confirm nothing leaked:
 curl -s -o /dev/null -w '%{http_code}\n' -L "$B/blog/<draft-slug>/"   # expect 404
 
 # no root-absolute internal references
-curl -s -L "$B/" | grep -ohE 'https?://[^"]+' | grep -v 'lovable-blog.example.com' | sort -u
+curl -s -L "$B/" | grep -ohE 'https?://[^"]+' | grep -v 'creativedigitalgrowth.bolt.host' | sort -u
 ```
 
 ## Rollback
 
-A failed build never reaches the deploy step, so the previous version stays live — the
-build is the safety net.
-
-To undo a bad *successful* deploy, the fast path needs no rebuild: **Cloudflare
-dashboard → the connected project → Deployments → pick an older successful deployment →
-"Rollback to this deployment"**. Instant.
-
-The from-source alternative is slower but keeps GitHub history and the live deployment
-in sync — revert the commit and push; Cloudflare rebuilds automatically:
+Not yet exercised. If Bolt.new keeps a publish history the way its Deployments-style UIs
+often do, an older publish may be re-selectable from inside the project — unverified.
+The from-source fallback that always works regardless of what Bolt exposes: revert the
+bad commit in GitHub, then re-import/re-open the Bolt project and Publish again.
 
 ```bash
 git revert <sha>
 git push
 ```
 
-There is no workflow run to re-run instead, the way there would be with GitHub Actions
-— reverting and pushing is the only from-source path here.
+Unlike the Cloudflare/Netlify siblings, pushing this alone is **not** confirmed to
+redeploy — see the unverified sync question above. Treat "revert and push" as step one
+of two until that's settled, with "reopen Bolt and Publish" as the likely step two.
 
 ## Local equivalents
 
@@ -128,9 +121,10 @@ account has Write only — same pattern as the sibling GitHub Pages repo.
 gh api repos/CreativeDigitalGrowth/lovable-blog --jq '.permissions'
 ```
 
-**Cloudflare.** Separately, whoever has login access to the Cloudflare account/dashboard
-controls what's actually deployed and how it's built — build settings, environment
-variables, custom domains, rollbacks — and also controls whether Cloudflare's GitHub App
-can even see this repo in the first place. GitHub write access alone cannot make a
-deploy happen if the Git integration were ever disconnected; Cloudflare account access
-alone cannot change what code exists in the repo. Both matter, independently.
+**Bolt.new.** Separately, whoever is signed into the Bolt.new account that imported and
+published this project controls what's actually live — republishing, and any build/env
+settings Bolt exposes. GitHub write access alone cannot make bolt.host redeploy if
+pushes turn out not to sync automatically (see above); Bolt account access alone cannot
+change what code exists in the GitHub repo unless that account also pushes back to it.
+Both matter, independently — and which Bolt.new account holds this project hasn't been
+recorded here yet.

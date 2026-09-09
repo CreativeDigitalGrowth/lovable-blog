@@ -7,18 +7,16 @@ family's seventh member, alongside the GitHub Pages, GitLab Pages, Netlify, Verc
 content, no shared git history. Full detail in
 [`docs/architecture.md`](docs/architecture.md).
 
-**Hosting is not yet decided.** This repo was scaffolded and pushed to GitHub first;
-unlike the other siblings, `docs/deployment.md` and `docs/setup.md` still describe the
-*inherited* Cloudflare Pages mechanism from the template it was copied from — that is
-stale until a real host is chosen and those docs are rewritten to match, the same way
-the Firebase-hosted sibling (`firebase-blog`) rewrote its docs after moving through
-Replit → Render → Firebase. The
-working name "lovable-blog" reflects the platform the user asked about
-(lovable.dev), but Lovable is a prompt-first React/Vite app builder, not a Git-integration
-static host like Cloudflare/Netlify — whether it can adopt this existing Astro codebase
-via its GitHub sync (rather than only generating new React projects) has not been
-verified. Don't assume that connection works the way `vzero-blog`'s v0.app connection
-did without checking.
+**Hosting is Bolt.new/bolt.host**, decided after the fact — this repo was scaffolded and
+pushed to GitHub first, then imported into Bolt.new (via the `bolt.new/~/github.com/…`
+import URL) and published from there to `https://creativedigitalgrowth.bolt.host`. The
+working name "lovable-blog" reflects the platform the user originally asked about
+(lovable.dev), a prompt-first React/Vite app builder — that platform's own GitHub sync
+was never tried, since Bolt.new turned out to be the tool actually used. **Don't assume
+`git push` alone redeploys the live site** — whether Bolt keeps polling the GitHub repo
+after import or the workspace only updates on a manual republish inside Bolt has not been
+verified; see the deployment note in [`docs/deployment.md`](docs/deployment.md) and check
+the live site after any change made outside Bolt's own editor.
 
 ## Development
 
@@ -82,19 +80,21 @@ breaks the build.
 **`public/admin/config.yml` is YAML.** Quote any string containing `: ` — an unquoted
 colon-space silently breaks the whole CMS.
 
-**The content repo (GitHub) and the eventual host are meant to stay two separate
-systems**, bridged by whatever Git integration the chosen host offers — that's the
-pattern every sibling follows (Cloudflare/Netlify's own dashboard integration, GitHub
-Actions for GitHub Pages/Firebase, GitLab CI, or a v0.app→Vercel connection). Sveltia CMS
-commits to the GitHub repo named in `public/admin/config.yml` regardless of which host
-ends up watching it. No host is connected yet in this repo.
+**The content repo (GitHub) and the host are meant to stay two separate systems**,
+bridged by whatever sync the host offers — that's the pattern every sibling follows
+(Cloudflare/Netlify's own dashboard integration, GitHub Actions for GitHub
+Pages/Firebase, GitLab CI, a v0.app→Vercel connection). Sveltia CMS commits to the
+GitHub repo named in `public/admin/config.yml` regardless. **For this sibling
+specifically, whether Bolt.new's connection is a live two-way sync or a one-time import
+snapshot is unverified** — unlike every other sibling, don't assume a CMS save reaches
+the live site until you've checked.
 
 ## Before calling a change done
 
 ```bash
 npm run check    # expect 0 errors
 npm run build
-grep -rhoE 'https?://[^"< ]+' dist --include=*.html | grep -v 'lovable-blog.example.com' | sort -u
+grep -rhoE 'https?://[^"< ]+' dist --include=*.html | grep -v 'creativedigitalgrowth.bolt.host' | sort -u
 ```
 
 The grep must print only genuinely external URLs (giscus, google maps, unpkg). If the
@@ -103,22 +103,13 @@ change is visible in a browser, verify with `npm run preview` rather than `npm r
 
 ## Deployment
 
-**Not yet configured.** The repo is created and pushed; no host is connected. Once one
-is chosen, wire it up the way the matching sibling did (see
-[`docs/deployment.md`](docs/deployment.md), which still needs rewriting for whatever is
-picked):
+**Live via Bolt.new.** The GitHub repo was imported into Bolt.new, then published from
+Bolt's own editor to `https://creativedigitalgrowth.bolt.host`. See
+[`docs/deployment.md`](docs/deployment.md) for what's confirmed vs. still unverified
+about how updates reach the live site.
 
-- A dashboard Git-integration host (Cloudflare Pages, Netlify) — connect it directly to
-  `CreativeDigitalGrowth/lovable-blog`, no repo secrets needed.
-- A GitHub Actions host (GitHub Pages, Firebase Hosting) — needs a workflow file and,
-  for Firebase, a service-account secret; check the generated workflow's build step
-  before trusting it (the `firebase-blog` sibling hit a concrete failure mode there).
-- Lovable.dev itself, if its GitHub sync turns out to support importing an existing
-  repo rather than only generating new ones — unverified, check before relying on it.
-
-Local git authenticates as `mohiseen-aumni`, the same account used for every sibling.
-See [`docs/setup.md`](docs/setup.md) once a host is picked and that doc is updated to
-match.
+Local git authenticates as `mohiseen-aumni`, the same account used for every sibling —
+that account's access is unrelated to whoever controls the Bolt.new project itself.
 
 ## Documentation
 
@@ -129,5 +120,4 @@ Full docs: https://docs.astro.build
 - [Images](https://docs.astro.build/en/guides/images/)
 - [Astro components](https://docs.astro.build/en/basics/astro-components/)
 
-Cloudflare-specific: https://developers.cloudflare.com/pages/ and
-https://developers.cloudflare.com/pages/configuration/git-integration/
+Bolt.new-specific: https://support.bolt.new/

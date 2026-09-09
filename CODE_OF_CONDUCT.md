@@ -41,7 +41,7 @@ repository.
 ## Reporting
 
 For something that needs attention, email the address on the
-[contact page](https://lovable-blog.example.com/contact/) rather
+[contact page](https://creativedigitalgrowth.bolt.host/contact/) rather
 than replying in the thread. Serious abuse can also be reported directly to GitHub at
 <https://github.com/contact/report-abuse>.
 
